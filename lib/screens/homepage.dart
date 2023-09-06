@@ -32,60 +32,108 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    getAllBooks();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(Icons.menu),
-        title: const Text('Dashboard'),
+        centerTitle: true,
+        backgroundColor: Colors.orange,
+        leading: const Icon(Icons.menu, color: Colors.white),
+        title: const Text(
+          'Dashboard',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.sort_by_alpha),
+            icon: const Icon(Icons.sort_by_alpha, color: Colors.white),
           ),
         ],
       ),
-      body: Row(
-        children: [
-          // Image.network(
-          //   'src',
-          //   width: 120,
-          //   height: 120,
-          //   fit: BoxFit.cover,
-          // ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                children: [
-                  const Text(
-                    'Title',
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Author',
-                    style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Rs. 299',
-                    style: TextStyle(color: Colors.green.shade600),
-                  ),
-                ],
-              ),
-              Text(
-                '⭐4.0',
-                style: TextStyle(color: Colors.amber.shade600),
-              ),
-            ],
-          ),
-        ],
+      body: FutureBuilder<BookList>(
+        future: getAllBooks(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+          if (snapshot.hasData) {
+            return ListView.builder(
+                itemCount: snapshot.data!.books.length,
+                itemBuilder: (context, index) {
+                  final book = snapshot.data!.books[index];
+
+                  return Card(
+                    margin: const EdgeInsets.all(4.0),
+                    child: Row(
+                      children: [
+                        Image.network(
+                          book.bookImage,
+                          width: 110,
+                          height: 110,
+                          fit: BoxFit.cover,
+                        ),
+                        Flexible(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                flex: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 16.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        book.bookName,
+                                        style: const TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        book.bookAuthor,
+                                        softWrap: true,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: Colors.grey.shade500,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        book.bookPrice,
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green.shade600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                flex: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 16.0),
+                                  child: Text(
+                                    '⭐ 4.0',
+                                    style:
+                                        TextStyle(color: Colors.amber.shade700),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                });
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
