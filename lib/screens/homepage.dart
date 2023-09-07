@@ -15,6 +15,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
+
   late BookList bookList;
 
   Future<BookList> getAllBooks() async {
@@ -36,11 +38,39 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldState,
+      drawer: Drawer(
+        child: ListView(
+          children: const [
+            DrawerHeader(
+              decoration: BoxDecoration(color: CupertinoColors.systemOrange),
+              child: Text('Drawer Header'),
+            ),
+            ListTile(
+              title: Text('Dashboard'),
+            ),
+            ListTile(
+              title: Text('Favorites'),
+            ),
+            ListTile(
+              title: Text('Settings'),
+            ),
+            ListTile(
+              title: Text('About Us'),
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            _scaffoldState.currentState!.openDrawer();
+          },
+          icon: const Icon(CupertinoIcons.line_horizontal_3),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         backgroundColor: Colors.orange,
-        leading:
-            const Icon(CupertinoIcons.line_horizontal_3, color: Colors.white),
         title: const Text(
           'Dashboard',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
@@ -50,7 +80,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               sortBooksByAlphabeticalOrder();
             },
-            icon: const Icon(Icons.sort_by_alpha, color: Colors.white),
+            icon: const Icon(Icons.sort_by_alpha),
           ),
         ],
       ),
