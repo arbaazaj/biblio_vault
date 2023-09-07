@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:biblio_vault/model/book.dart';
 import 'package:biblio_vault/screens/methods/build_all_book_list.dart';
+import 'package:biblio_vault/widgets/custom_drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -39,28 +40,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldState,
-      drawer: Drawer(
-        child: ListView(
-          children: const [
-            DrawerHeader(
-              decoration: BoxDecoration(color: CupertinoColors.systemOrange),
-              child: Text('Drawer Header'),
-            ),
-            ListTile(
-              title: Text('Dashboard'),
-            ),
-            ListTile(
-              title: Text('Favorites'),
-            ),
-            ListTile(
-              title: Text('Settings'),
-            ),
-            ListTile(
-              title: Text('About Us'),
-            ),
-          ],
-        ),
-      ),
+      drawer: const CustomDrawer(),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
