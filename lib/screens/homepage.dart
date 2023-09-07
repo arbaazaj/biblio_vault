@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:biblio_vault/model/book.dart';
-import 'package:biblio_vault/screens/book_details.dart';
+import 'package:biblio_vault/screens/methods/build_all_book_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -38,116 +39,28 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.orange,
-        leading: const Icon(Icons.menu, color: Colors.white),
+        leading:
+            const Icon(CupertinoIcons.line_horizontal_3, color: Colors.white),
         title: const Text(
           'Dashboard',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              sortBooksByAlphabeticalOrder();
+            },
             icon: const Icon(Icons.sort_by_alpha, color: Colors.white),
           ),
         ],
       ),
-      body: FutureBuilder<BookList>(
-        future: getAllBooks(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-          if (snapshot.hasData) {
-            return ListView.builder(
-                itemCount: snapshot.data!.books.length,
-                itemBuilder: (context, index) {
-                  final book = snapshot.data!.books[index];
-
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BookDetails(book: book)));
-                    },
-                    child: Card(
-                      margin: const EdgeInsets.all(4.0),
-                      child: Row(
-                        children: [
-                          Hero(
-                            tag: 'bookImageTag',
-                            child: Image.network(
-                              book.bookImage,
-                              width: 110,
-                              height: 110,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Flexible(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Flexible(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 16.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          book.bookName,
-                                          style: const TextStyle(
-                                              fontSize: 18.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          book.bookAuthor,
-                                          softWrap: true,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                              color: Colors.grey.shade500,
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          book.bookPrice,
-                                          style: TextStyle(
-                                            fontSize: 15.0,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green.shade600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Flexible(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 16.0),
-                                    child: Text(
-                                      '⭐ 4.0',
-                                      style: TextStyle(
-                                          color: Colors.amber.shade700),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                });
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+      body: buildBookList(getAllBooks()),
     );
+  }
+
+  void sortBooksByAlphabeticalOrder() {
+    bookList.books.sort((book1, book2) {
+      return book1.bookRating.compareTo(book2.bookRating);
+    });
   }
 }
