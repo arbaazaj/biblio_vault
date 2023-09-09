@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
 
-  late BookList bookList;
+  BookList bookList = BookList(books: []);
 
   Future<BookList> getAllBooks() async {
     final Uri uri = Uri.parse('http://13.235.250.119/v1/book/fetch_books/');
@@ -37,10 +37,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    //getAllBooks();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldState,
-      drawer: const CustomDrawer(),
+      drawer: CustomDrawer(books: bookList.books),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {

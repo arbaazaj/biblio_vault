@@ -1,7 +1,7 @@
 import 'package:biblio_vault/model/book.dart';
+import 'package:biblio_vault/utils/globals.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class BookDetails extends StatefulWidget {
   final Book? book;
@@ -13,6 +13,24 @@ class BookDetails extends StatefulWidget {
 }
 
 class _BookDetailsState extends State<BookDetails> {
+  late bool isFavoriteBook;
+
+  void checkIfFavorite() {
+    var pref = sharedPreferences.getString(widget.book!.bookId);
+    if (pref != null) {
+      isFavoriteBook = true;
+      setState(() {});
+    } else {
+      isFavoriteBook = false;
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkIfFavorite();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +130,16 @@ class _BookDetailsState extends State<BookDetails> {
                           // Add to favorite list.
                           onTap: () {
                             //Navigator.of(context).push(favoriteBooksRoute(widget.book));
-
+                            if (isFavoriteBook) {
+                              sharedPreferences.remove(widget.book!.bookId);
+                              isFavoriteBook = false;
+                              setState(() {});
+                            } else {
+                              sharedPreferences.setString(
+                                  widget.book!.bookId, widget.book!.bookId);
+                              isFavoriteBook = true;
+                              setState(() {});
+                            }
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -126,18 +153,31 @@ class _BookDetailsState extends State<BookDetails> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  const Icon(
-                                    Icons.favorite_border,
-                                    color: CupertinoColors.systemOrange,
-                                  ),
+                                  isFavoriteBook
+                                      ? const Icon(
+                                          Icons.favorite,
+                                          color: CupertinoColors.systemOrange,
+                                        )
+                                      : const Icon(
+                                          Icons.favorite_border,
+                                          color: CupertinoColors.systemOrange,
+                                        ),
                                   const SizedBox(width: 8.0),
-                                  Text(
-                                    'Add to favorite',
-                                    style: TextStyle(
-                                      color: Colors.grey.shade600,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                                  isFavoriteBook
+                                      ? const Text(
+                                          'Remove',
+                                          style: TextStyle(
+                                            color: CupertinoColors.systemOrange,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        )
+                                      : Text(
+                                          'Add to favorite',
+                                          style: TextStyle(
+                                            color: Colors.grey.shade600,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                 ],
                               ),
                             ),

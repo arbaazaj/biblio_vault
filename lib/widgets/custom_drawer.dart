@@ -1,30 +1,43 @@
+import 'package:biblio_vault/model/book.dart';
+import 'package:biblio_vault/screens/favorites.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({
-    super.key,
-  });
+  final List<Book> books;
+
+  const CustomDrawer({super.key, required this.books});
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
-        children: const [
-          DrawerHeader(
+        children: [
+          const DrawerHeader(
             decoration: BoxDecoration(color: CupertinoColors.systemOrange),
-            child: Text('Drawer Header'),
+            child: Text(
+              'Biblio Vault',
+              style: TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold,
+                  color: CupertinoColors.systemBackground),
+            ),
           ),
-          ListTile(
+          const ListTile(
             title: Text('Dashboard'),
           ),
           ListTile(
-            title: Text('Favorites'),
+            title: const Text('Favorites'),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) => FavoriteBooks(books: books),
+              ),
+            ),
           ),
-          ListTile(
+          const ListTile(
             title: Text('Settings'),
           ),
-          ListTile(
+          const ListTile(
             title: Text('About Us'),
           ),
         ],
